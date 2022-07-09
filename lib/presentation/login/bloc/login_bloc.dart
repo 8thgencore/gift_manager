@@ -10,8 +10,25 @@ part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc() : super(LoginState.initial()) {
-    on<LoginLoginButtonClicked>((event, emit) {
-      emit(state.copyWith(authenticated: true));
-    });
+    on<LoginLoginButtonClicked>(_loginButtonClicked);
+  }
+
+  FutureOr<void> _loginButtonClicked(
+    LoginLoginButtonClicked event,
+    Emitter<LoginState> emit,
+  ) {
+    emit(state.copyWith(authenticated: true));
+  }
+
+  @override
+  void onEvent(LoginEvent event) {
+    debugPrint('Login Bloc. Event happened: $event');
+    super.onEvent(event);
+  }
+
+  @override
+  void onTransition(Transition<LoginEvent, LoginState> transition) {
+    debugPrint('Login Bloc. Transition happened: $transition');
+    super.onTransition(transition);
   }
 }
