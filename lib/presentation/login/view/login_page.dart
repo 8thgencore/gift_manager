@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gift_manager/presentation/home/view/home_page.dart';
 import 'package:gift_manager/presentation/login/bloc/login_bloc.dart';
+import 'package:gift_manager/presentation/login/model/email_error.dart';
+import 'package:gift_manager/presentation/login/model/password_error.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -109,12 +111,22 @@ class _EmailTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 36),
-      child: TextField(
-        focusNode: _emailFocusNode,
-        onChanged: (text) =>
-            context.read<LoginBloc>().add(LoginEmailChanged(text)),
-        onSubmitted: (_) => _passwordFocusNode.requestFocus(),
-        decoration: InputDecoration(hintText: 'Почта'),
+      child: BlocSelector<LoginBloc, LoginState, EmailError>(
+        selector: (state) => state.emailError,
+        builder: (context, emailError) {
+          return TextField(
+            focusNode: _emailFocusNode,
+            onChanged: (text) =>
+                context.read<LoginBloc>().add(LoginEmailChanged(text)),
+            onSubmitted: (_) => _passwordFocusNode.requestFocus(),
+            decoration: InputDecoration(
+              hintText: 'Почта',
+              errorText: emailError == EmailError.noError
+                  ? null
+                  : emailError.toString(),
+            ),
+          );
+        },
       ),
     );
   }
@@ -132,13 +144,23 @@ class _PasswordTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 36),
-      child: TextField(
-        focusNode: _passwordFocusNode,
-        onChanged: (text) =>
-            context.read<LoginBloc>().add(LoginPasswordChanged(text)),
-        onSubmitted: (_) =>
-            context.read<LoginBloc>().add(const LoginLoginButtonClicked()),
-        decoration: InputDecoration(hintText: 'Пароль'),
+      child: BlocSelector<LoginBloc, LoginState, PasswordError>(
+        selector: (state) => state.passwordError,
+        builder: (context, passwordError) {
+          return TextField(
+            focusNode: _passwordFocusNode,
+            onChanged: (text) =>
+                context.read<LoginBloc>().add(LoginPasswordChanged(text)),
+            onSubmitted: (_) =>
+                context.read<LoginBloc>().add(const LoginLoginButtonClicked()),
+            decoration: InputDecoration(
+              hintText: 'Пароль',
+              errorText: passwordError == PasswordError.noError
+                  ? null
+                  : passwordError.toString(),
+            ),
+          );
+        },
       ),
     );
   }
@@ -154,9 +176,7 @@ class _LoginButton extends StatelessWidget {
       child: SizedBox(
         width: double.infinity,
         child: BlocSelector<LoginBloc, LoginState, bool>(
-          selector: (state) {
-            return state.emailValid && state.passwordValid;
-          },
+          selector: (state) => state.allFieldsValid,
           builder: (context, fieldsValid) {
             return ElevatedButton(
               onPressed: fieldsValid
