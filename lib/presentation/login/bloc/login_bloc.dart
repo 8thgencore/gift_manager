@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:gift_manager/data/modal/request_error.dart';
 import 'package:gift_manager/presentation/login/model/models.dart';
 
 part 'login_event.dart';
@@ -15,6 +16,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<LoginLoginButtonClicked>(_loginButtonClicked);
     on<LoginEmailChanged>(_emailChanged);
     on<LoginPasswordChanged>(_passwordChanged);
+    on<LoginRequestErrorShowed>(_requestErrorShowed);
   }
 
   FutureOr<void> _loginButtonClicked(
@@ -22,8 +24,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     Emitter<LoginState> emit,
   ) async {
     if (state.allFieldsValid) {
-      final response =
-          await _login(email: state.email, password: state.password);
+      final response = await _login(
+        email: state.email,
+        password: state.password,
+      );
       if (response == null) {
         emit(state.copyWith(authenticated: true));
       } else {
@@ -34,10 +38,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           case LoginError.wrongPassword:
             emit(state.copyWith(passwordError: PasswordError.wrongPassword));
             break;
+          case LoginError.other:
+            emit(state.copyWith(requestError: RequestError.unknown));
+            break;
         }
-        // case LoginError.other:
-        //   // TODO: Handle this case.
-        //   break;
       }
     }
   }
@@ -81,6 +85,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     ));
   }
 
+  FutureOr<void> _requestErrorShowed(
+    LoginRequestErrorShowed event,
+    Emitter<LoginState> emit,
+  ) {
+    emit(state.copyWith(requestError: RequestError.noError));
+  }
+
   @override
   void onEvent(LoginEvent event) {
     debugPrint('Login Bloc. Event happened: $event');
@@ -94,4 +105,4 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 }
 
-enum LoginError { emailNotExist, wrongPassword }
+enum LoginError { emailNotExist, wrongPassword, other }
