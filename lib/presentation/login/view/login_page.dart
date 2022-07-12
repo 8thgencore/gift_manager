@@ -61,13 +61,15 @@ class _LoginPageWidgetState extends State<_LoginPageWidget> {
         BlocListener<LoginBloc, LoginState>(
           listener: (context, state) {
             if (state.requestError != RequestError.noError) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: const Text(
-                  'Произошла ошибка',
-                  style: TextStyle(color: Colors.white),
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Text(
+                    'Произошла ошибка',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  backgroundColor: Colors.red[900],
                 ),
-                backgroundColor: Colors.red[900],
-              ));
+              );
               context.read<LoginBloc>().add(const LoginRequestErrorShowed());
             }
           },
@@ -96,7 +98,7 @@ class _LoginPageWidgetState extends State<_LoginPageWidget> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text("Еще нет аккаунта?"),
+              const Text('Еще нет аккаунта?'),
               TextButton(
                 onPressed: () => debugPrint('Нажали на кнопку Создать'),
                 child: const Text('Создать'),
@@ -203,6 +205,17 @@ class _LoginButton extends StatelessWidget {
                       .read<LoginBloc>()
                       .add(const LoginLoginButtonClicked())
                   : null,
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.resolveWith((states) {
+                  if (states.contains(MaterialState.disabled)) {
+                    return const Color(0xB3366EC4);
+                  }
+                  return const Color(0xFF2950AF);
+                }),
+                textStyle: MaterialStateProperty.all(
+                  const TextStyle(color: Colors.white),
+                ),
+              ),
               child: const Text('Войти'),
             );
           },
