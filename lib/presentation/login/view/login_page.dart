@@ -214,17 +214,6 @@ class _LoginButton extends StatelessWidget {
                       .read<LoginBloc>()
                       .add(const LoginLoginButtonClicked())
                   : null,
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.resolveWith((states) {
-                  if (states.contains(MaterialState.disabled)) {
-                    return const Color(0xB3366EC4);
-                  }
-                  return const Color(0xFF2950AF);
-                }),
-                textStyle: MaterialStateProperty.all(
-                  const TextStyle(color: Colors.white),
-                ),
-              ),
               child: const Text('Войти'),
             );
           },

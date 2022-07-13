@@ -45,4 +45,59 @@ final darkTheme = _base.copyWith(
       color: AppColors.darkWhite100,
     ),
   ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ButtonStyle(
+      padding: MaterialStateProperty.all(const EdgeInsets.all(16)),
+      elevation: MaterialStateProperty.all(0),
+      shape: MaterialStateProperty.all(
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+      textStyle: MaterialStateProperty.resolveWith(
+        (states) {
+          return states.contains(MaterialState.disabled)
+              ? const TextStyle(
+                  color: AppColors.darkWhite60,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                )
+              : const TextStyle(
+                  color: AppColors.darkWhite100,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                );
+        },
+      ),
+      backgroundColor: MaterialStateProperty.resolveWith((states) {
+        return states.contains(MaterialState.disabled)
+            ? AppColors.darkDarkBlue100
+            : AppColors.darkDarkBlue70;
+      }),
+    ),
+  ),
+  textButtonTheme: TextButtonThemeData(
+    style: ButtonStyle(
+      padding: MaterialStateProperty.all(
+        const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 8,
+        ),
+      ),
+      shape: MaterialStateProperty.resolveWith((state) {
+        return const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+        );
+      }),
+      foregroundColor: MaterialStateProperty.resolveWith((states) {
+        return states.contains(MaterialState.disabled)
+            ? AppColors.darkDarkBlue100.withOpacity(0.5)
+            : AppColors.darkDarkBlue100;
+      }),
+      backgroundColor: MaterialStateProperty.resolveWith(
+        (states) => Colors.transparent,
+      ),
+      overlayColor: MaterialStateProperty.all(
+        AppColors.lightLightBlue100,
+      ),
+    ),
+  ),
 );
