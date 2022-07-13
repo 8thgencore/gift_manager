@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:bloc/bloc.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:gift_manager/data/modal/request_error.dart';
@@ -12,6 +13,9 @@ part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
+  static final _passwordRegexp =
+      RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$');
+
   LoginBloc() : super(LoginState.initial()) {
     on<LoginLoginButtonClicked>(_loginButtonClicked);
     on<LoginEmailChanged>(_emailChanged);
@@ -62,13 +66,18 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     Emitter<LoginState> emit,
   ) {
     final newEmail = event.email;
-    final emailValid = newEmail.length > 4;
-    emit(state.copyWith(
-      email: newEmail,
-      emailValid: emailValid,
-      emailError: EmailError.noError,
-      authenticated: false,
-    ));
+    emit(
+      state.copyWith(
+        email: newEmail,
+        emailValid: _emailValid(newEmail),
+        emailError: EmailError.noError,
+        authenticated: false,
+      ),
+    );
+  }
+
+  bool _emailValid(final String email) {
+    return EmailValidator.validate(email);
   }
 
   FutureOr<void> _passwordChanged(
@@ -76,13 +85,18 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     Emitter<LoginState> emit,
   ) {
     final newPassword = event.password;
-    final passwordValid = newPassword.length >= 8;
-    emit(state.copyWith(
-      email: newPassword,
-      passwordValid: passwordValid,
-      passwordError: PasswordError.noError,
-      authenticated: false,
-    ));
+    emit(
+      state.copyWith(
+        email: newPassword,
+        passwordValid: _passwordValid(newPassword),
+        passwordError: PasswordError.noError,
+        authenticated: false,
+      ),
+    );
+  }
+
+  bool _passwordValid(final String password) {
+    return _passwordRegexp.hasMatch(password);
   }
 
   FutureOr<void> _requestErrorShowed(
