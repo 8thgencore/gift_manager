@@ -83,10 +83,7 @@ class _LoginPageWidgetState extends State<_LoginPageWidget> {
           // Expanded(flex: 4, child: SizedBox.expand()),
           const SizedBox(height: 64),
           Center(
-            child: Text(
-              'Вход',
-              style: context.theme.h2,
-            ),
+            child: Text('Вход', style: context.theme.h2),
           ),
           const Spacer(flex: 5),
           _EmailTextField(
