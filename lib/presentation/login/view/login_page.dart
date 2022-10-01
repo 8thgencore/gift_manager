@@ -6,6 +6,7 @@ import 'package:gift_manager/presentation/home/view/home_page.dart';
 import 'package:gift_manager/presentation/login/bloc/login_bloc.dart';
 import 'package:gift_manager/presentation/login/model/email_error.dart';
 import 'package:gift_manager/presentation/login/model/password_error.dart';
+import 'package:gift_manager/presentation/registration/view/registration_page.dart';
 import 'package:gift_manager/resources/app_colors.dart';
 
 class LoginPage extends StatelessWidget {
@@ -109,7 +110,9 @@ class _LoginPageWidgetState extends State<_LoginPageWidget> {
                 ),
               ),
               TextButton(
-                onPressed: () => debugPrint('Нажали на кнопку Создать'),
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const RegistrationPage()),
+                ),
                 child: const Text('Создать'),
               ),
             ],
@@ -148,14 +151,11 @@ class _EmailTextField extends StatelessWidget {
             focusNode: _emailFocusNode,
             autocorrect: false,
             keyboardType: TextInputType.emailAddress,
-            onChanged: (text) =>
-                context.read<LoginBloc>().add(LoginEmailChanged(text)),
+            onChanged: (text) => context.read<LoginBloc>().add(LoginEmailChanged(text)),
             onSubmitted: (_) => _passwordFocusNode.requestFocus(),
             decoration: InputDecoration(
               labelText: 'Почта',
-              errorText: emailError == EmailError.noError
-                  ? null
-                  : emailError.toString(),
+              errorText: emailError == EmailError.noError ? null : emailError.toString(),
             ),
           );
         },
@@ -184,15 +184,11 @@ class _PasswordTextField extends StatelessWidget {
             autocorrect: false,
             keyboardType: TextInputType.visiblePassword,
             obscureText: true,
-            onChanged: (text) =>
-                context.read<LoginBloc>().add(LoginPasswordChanged(text)),
-            onSubmitted: (_) =>
-                context.read<LoginBloc>().add(const LoginLoginButtonClicked()),
+            onChanged: (text) => context.read<LoginBloc>().add(LoginPasswordChanged(text)),
+            onSubmitted: (_) => context.read<LoginBloc>().add(const LoginLoginButtonClicked()),
             decoration: InputDecoration(
               labelText: 'Пароль',
-              errorText: passwordError == PasswordError.noError
-                  ? null
-                  : passwordError.toString(),
+              errorText: passwordError == PasswordError.noError ? null : passwordError.toString(),
             ),
           );
         },
@@ -215,9 +211,7 @@ class _LoginButton extends StatelessWidget {
           builder: (context, fieldsValid) {
             return ElevatedButton(
               onPressed: fieldsValid
-                  ? () => context
-                      .read<LoginBloc>()
-                      .add(const LoginLoginButtonClicked())
+                  ? () => context.read<LoginBloc>().add(const LoginLoginButtonClicked())
                   : null,
               child: const Text('Войти'),
             );

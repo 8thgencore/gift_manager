@@ -1,6 +1,6 @@
 enum RegistrationEmailError { empty, invalid }
 
-enum RegistrationPasswordError { empty, tooShort, wron gSymbols }
+enum RegistrationPasswordError { empty, tooShort, wrongSymbols }
 
 enum RegistrationPasswordConfirmError {empty, different }
 
