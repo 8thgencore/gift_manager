@@ -13,9 +13,11 @@ class RegistrationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => RegistrationBloc(),
-      child: Scaffold(
-        appBar: AppBar(),
-        body: const _RegistrationPageWidget(),
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(),
+          body: const _RegistrationPageWidget(),
+        ),
       ),
     );
   }
@@ -32,8 +34,15 @@ class _RegistrationPageWidgetState extends State<_RegistrationPageWidget> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: const [
-        _AvatarWidget(),
+      children: [
+        Expanded(
+          child: ListView(
+            children: [
+              _AvatarWidget(),
+            ],
+          ),
+        ),
+        _RegisterButton(),
       ],
     );
   }
@@ -76,6 +85,31 @@ class _AvatarWidget extends StatelessWidget {
             child: const Text('Изменить'),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _RegisterButton extends StatelessWidget {
+  const _RegisterButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: SizedBox(
+        width: double.infinity,
+        child: BlocSelector<RegistrationBloc, RegistrationState, bool>(
+          selector: (state) => state is RegistrationInProgress,
+          builder: (context, inProgress) {
+            return ElevatedButton(
+              onPressed: inProgress
+                  ? null
+                  : () => context.read<RegistrationBloc>().add(const RegistrationCreateAccount()),
+              child: const Text('Создать'),
+            );
+          },
+        ),
       ),
     );
   }
