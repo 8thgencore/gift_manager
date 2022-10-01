@@ -90,7 +90,7 @@ class _RegistrationPageWidgetState extends State<_RegistrationPageWidget> {
               const SizedBox(height: 8),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text('Создать аватар', style: context.theme.h2),
+                child: Text('Создать аккаунт', style: context.theme.h2),
               ),
               const SizedBox(height: 24),
               _EmailTextField(
