@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gift_manager/extensions/build_context.dart';
 import 'package:gift_manager/extensions/theme_extensions.dart';
+import 'package:gift_manager/presentation/home/view/home_page.dart';
 import 'package:gift_manager/presentation/registration/bloc/registration_bloc.dart';
 import 'package:gift_manager/resources/app_colors.dart';
 
@@ -14,10 +15,20 @@ class RegistrationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => RegistrationBloc(),
-      child: SafeArea(
-        child: Scaffold(
-          appBar: AppBar(),
-          body: const _RegistrationPageWidget(),
+      child: BlocListener<RegistrationBloc, RegistrationState>(
+        listener: (context, state) {
+          if (state is RegistrationCompleted) {
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const HomePage()),
+              (route) => false,
+            );
+          }
+        },
+        child: SafeArea(
+          child: Scaffold(
+            appBar: AppBar(),
+            body: const _RegistrationPageWidget(),
+          ),
         ),
       ),
     );
