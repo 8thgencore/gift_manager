@@ -10,7 +10,6 @@ import 'package:gift_manager/data/modal/request_error.dart';
 import 'package:gift_manager/data/repository/refresh_token_repository.dart';
 import 'package:gift_manager/data/repository/token_repository.dart';
 import 'package:gift_manager/data/repository/user_repository.dart';
-import 'package:gift_manager/data/storage/shared_preference_data.dart';
 import 'package:gift_manager/presentation/registration/models/errors.dart';
 
 part 'registration_event.dart';
@@ -151,16 +150,14 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
       return;
     }
     emit(const RegistrationInProgress());
-    final response = await  _register();
-    if(response == null) {
-
+    final response = await _register();
+    if (response == null) {
     } else {
       await UserRepository.getInstance().setItem(response.user);
       await TokenRepository.getInstance().setItem(response.token);
       await RefreshTokenRepository.getInstance().setItem(response.refreshToken);
       emit(const RegistrationCompleted());
     }
-
   }
 
   Future<UserWithTokensDto?> _register() async {

@@ -7,20 +7,20 @@ part 'user_with_tokens_dto.g.dart';
 @JsonSerializable()
 class UserWithTokensDto extends Equatable {
   const UserWithTokensDto({
+    required this.user,
     required this.token,
     required this.refreshToken,
-    required this.user,
   });
 
   factory UserWithTokensDto.fromJson(final Map<String, dynamic> json) =>
       _$UserWithTokensDtoFromJson(json);
 
+  final UserDto user;
   final String token;
   final String refreshToken;
-  final UserDto user;
 
   Map<String, dynamic> toJson() => _$UserWithTokensDtoToJson(this);
 
   @override
-  List<Object?> get props => [token, refreshToken, user];
+  List<Object?> get props => [user, token, refreshToken];
 }
