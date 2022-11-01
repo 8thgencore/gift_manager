@@ -4,8 +4,12 @@ import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:equatable/equatable.dart';
+import 'package:gift_manager/data/http/model/user_with_tokens_dto.dart';
 import 'package:gift_manager/data/http/unauthorized_api_service.dart';
 import 'package:gift_manager/data/modal/request_error.dart';
+import 'package:gift_manager/data/repository/refresh_token_repository.dart';
+import 'package:gift_manager/data/repository/token_repository.dart';
+import 'package:gift_manager/data/repository/user_repository.dart';
 import 'package:gift_manager/data/storage/shared_preference_data.dart';
 import 'package:gift_manager/presentation/registration/models/errors.dart';
 
@@ -147,25 +151,27 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
       return;
     }
     emit(const RegistrationInProgress());
-    final token = await _register();
-    SharedPreferenceData.getInstance().setToken(token);
-    emit(const RegistrationCompleted());
+    final response = await  _register();
+    if(response == null) {
+
+    } else {
+      await UserRepository.getInstance().setItem(response.user);
+      await TokenRepository.getInstance().setItem(response.token);
+      await RefreshTokenRepository.getInstance().setItem(response.refreshToken);
+      emit(const RegistrationCompleted());
+    }
+
   }
 
-  Future<String> _register() async {
-    try {
-      final response = await UnauthorizedApiService.getInstance().register(
-        email: _email,
-        password: _password,
-        name: _name,
-        avatarUrl: _avatarBuilder(_avatarKey),
-      );
-      //TODO
-      return response?.token ?? 'asd';
-    } catch (e) {
-      //TODO
-    }
-    return 'token';
+  Future<UserWithTokensDto?> _register() async {
+    final response = await UnauthorizedApiService.getInstance().register(
+      email: _email,
+      password: _password,
+      name: _name,
+      avatarUrl: _avatarBuilder(_avatarKey),
+    );
+    //TODO errors
+    return response;
   }
 
   RegistrationFieldsInfo _calculateFieldsInfo() {

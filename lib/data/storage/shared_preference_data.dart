@@ -6,11 +6,24 @@ class SharedPreferenceData {
   SharedPreferenceData._internal();
 
   static const _tokenKey = 'token_key';
+  static const _refreshTokenKey = 'refresh_token_key';
+  static const _userKey = 'user_key';
   static SharedPreferenceData? _instance;
 
   Future<bool> setToken(final String? token) => _setItem(key: _tokenKey, item: token);
 
   Future<String?> getToken() => _getItem(_tokenKey);
+
+  Future<bool> setRefreshToken(final String? refreshToken) => _setItem(
+        key: _refreshTokenKey,
+        item: refreshToken,
+      );
+
+  Future<String?> getRefreshToken() => _getItem(_refreshTokenKey);
+
+  Future<bool> setUser(final String? user) => _setItem(key: _userKey, item: user);
+
+  Future<String?> getUser() => _getItem(_userKey);
 
   Future<bool> _setItem({
     required final String key,
