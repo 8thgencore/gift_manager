@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:bloc/bloc.dart';
+import 'package:either_dart/either.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:equatable/equatable.dart';
+import 'package:gift_manager/data/http/model/api_error.dart';
 import 'package:gift_manager/data/http/model/user_with_tokens_dto.dart';
 import 'package:gift_manager/data/http/unauthorized_api_service.dart';
 import 'package:gift_manager/data/modal/request_error.dart';
@@ -151,16 +153,18 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
     }
     emit(const RegistrationInProgress());
     final response = await _register();
-    if (response == null) {
-    } else {
-      await UserRepository.getInstance().setItem(response.user);
-      await TokenRepository.getInstance().setItem(response.token);
-      await RefreshTokenRepository.getInstance().setItem(response.refreshToken);
+    if (response.isRight) {
+      final userWithTokens = response.right;
+      await UserRepository.getInstance().setItem(userWithTokens.user);
+      await TokenRepository.getInstance().setItem(userWithTokens.token);
+      await RefreshTokenRepository.getInstance().setItem(userWithTokens.refreshToken);
       emit(const RegistrationCompleted());
+    } else {
+//TODO hangle error
     }
   }
 
-  Future<UserWithTokensDto?> _register() async {
+  Future<Either<ApiError, UserWithTokensDto>> _register() async {
     final response = await UnauthorizedApiService.getInstance().register(
       email: _email,
       password: _password,
