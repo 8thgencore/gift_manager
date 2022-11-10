@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:bloc/bloc.dart';
 import 'package:either_dart/either.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gift_manager/data/http/model/api_error.dart';
 import 'package:gift_manager/data/http/model/user_with_tokens_dto.dart';
 import 'package:gift_manager/data/http/unauthorized_api_service.dart';
@@ -12,6 +12,7 @@ import 'package:gift_manager/data/modal/request_error.dart';
 import 'package:gift_manager/data/repository/refresh_token_repository.dart';
 import 'package:gift_manager/data/repository/token_repository.dart';
 import 'package:gift_manager/data/repository/user_repository.dart';
+import 'package:gift_manager/di/service_locator.dart';
 import 'package:gift_manager/presentation/registration/models/errors.dart';
 
 part 'registration_event.dart';
@@ -155,9 +156,9 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
     final response = await _register();
     if (response.isRight) {
       final userWithTokens = response.right;
-      await UserRepository.getInstance().setItem(userWithTokens.user);
-      await TokenRepository.getInstance().setItem(userWithTokens.token);
-      await RefreshTokenRepository.getInstance().setItem(userWithTokens.refreshToken);
+      await sl.get<UserRepository>().setItem(userWithTokens.user);
+      await sl.get<TokenRepository>().setItem(userWithTokens.token);
+      await sl.get<RefreshTokenRepository>().setItem(userWithTokens.refreshToken);
       emit(const RegistrationCompleted());
     } else {
 //TODO hangle error

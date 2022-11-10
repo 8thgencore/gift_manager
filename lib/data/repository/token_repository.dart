@@ -1,14 +1,8 @@
 import 'package:gift_manager/data/repository/base/reactive_repository.dart';
 import 'package:gift_manager/data/repository/token_provider.dart';
-import 'package:gift_manager/di/service_locator.dart';
 
 class TokenRepository extends ReactiveRepository<String> {
-  factory TokenRepository.getInstance() =>
-      _instance ??= TokenRepository._internal(sl.get<TokenProvider>());
-
-  TokenRepository._internal(this._tokenProvider);
-
-  static TokenRepository? _instance;
+  TokenRepository(this._tokenProvider);
 
   final TokenProvider _tokenProvider;
 
