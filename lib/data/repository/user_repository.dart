@@ -2,18 +2,18 @@ import 'dart:convert';
 
 import 'package:gift_manager/data/http/model/user_dto.dart';
 import 'package:gift_manager/data/repository/base/reactive_repository.dart';
-import 'package:gift_manager/data/storage/shared_preference_data.dart';
+import 'package:gift_manager/data/repository/user_provider.dart';
+import 'package:gift_manager/di/service_locator.dart';
 
 class UserRepository extends ReactiveRepository<UserDto> {
-  factory UserRepository.getInstance() => _instance ??= UserRepository._internal(
-        SharedPreferenceData.getInstance(),
-      );
+  factory UserRepository.getInstance() =>
+      _instance ??= UserRepository._internal(sl.get<UserProvider>());
 
-  UserRepository._internal(this._spData);
+  UserRepository._internal(this._userProvider);
 
   static UserRepository? _instance;
 
-  final SharedPreferenceData _spData;
+  final UserProvider _userProvider;
 
   @override
   UserDto convertFromString(String rawItem) => UserDto.fromJson(
@@ -24,8 +24,8 @@ class UserRepository extends ReactiveRepository<UserDto> {
   String convertToString(UserDto item) => json.encode(item.toJson());
 
   @override
-  Future<String?> getRawData() => _spData.getUser();
+  Future<String?> getRawData() => _userProvider.getUser();
 
   @override
-  Future<bool> saveRawData(String? item) => _spData.setUser(item);
+  Future<bool> saveRawData(String? item) => _userProvider.setUser(item);
 }

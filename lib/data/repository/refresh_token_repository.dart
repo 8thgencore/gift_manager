@@ -1,16 +1,16 @@
 import 'package:gift_manager/data/repository/base/reactive_repository.dart';
-import 'package:gift_manager/data/storage/shared_preference_data.dart';
+import 'package:gift_manager/data/repository/refresh_token_provider.dart';
+import 'package:gift_manager/di/service_locator.dart';
 
 class RefreshTokenRepository extends ReactiveRepository<String> {
-  factory RefreshTokenRepository.getInstance() => _instance ??= RefreshTokenRepository._internal(
-    SharedPreferenceData.getInstance(),
-  );
+  factory RefreshTokenRepository.getInstance() =>
+      _instance ??= RefreshTokenRepository._internal(sl.get<RefreshTokenProvider>());
 
-  RefreshTokenRepository._internal(this._spData);
+  RefreshTokenRepository._internal(this._refreshTokenProvider);
 
   static RefreshTokenRepository? _instance;
 
-  final SharedPreferenceData _spData;
+  final RefreshTokenProvider _refreshTokenProvider;
 
   @override
   String convertFromString(String rawItem) => rawItem;
@@ -19,8 +19,8 @@ class RefreshTokenRepository extends ReactiveRepository<String> {
   String convertToString(String item) => item;
 
   @override
-  Future<String?> getRawData() => _spData.getRefreshToken();
+  Future<String?> getRawData() => _refreshTokenProvider.getRefreshToken();
 
   @override
-  Future<bool> saveRawData(String? item) => _spData.setRefreshToken(item);
+  Future<bool> saveRawData(String? item) => _refreshTokenProvider.setRefreshToken(item);
 }
