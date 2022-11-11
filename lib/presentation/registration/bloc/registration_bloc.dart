@@ -12,7 +12,6 @@ import 'package:gift_manager/data/modal/request_error.dart';
 import 'package:gift_manager/data/repository/refresh_token_repository.dart';
 import 'package:gift_manager/data/repository/token_repository.dart';
 import 'package:gift_manager/data/repository/user_repository.dart';
-import 'package:gift_manager/di/service_locator.dart';
 import 'package:gift_manager/presentation/registration/models/errors.dart';
 
 part 'registration_event.dart';
@@ -20,8 +19,11 @@ part 'registration_event.dart';
 part 'registration_state.dart';
 
 class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
-  RegistrationBloc()
-      : super(RegistrationFieldsInfo(avatarLink: _avatarBuilder(_defaultAvatarKey))) {
+  RegistrationBloc({
+    required this.userRepository,
+    required this.tokenRepository,
+    required this.refreshTokenRepository,
+  }) : super(RegistrationFieldsInfo(avatarLink: _avatarBuilder(_defaultAvatarKey))) {
     on<RegistrationChangeAvatar>(_onChangeAvatar);
     on<RegistrationEmailChanged>(_onEmailChanged);
     on<RegistrationEmailFocusLost>(_onEmailFocusLost);
@@ -33,6 +35,10 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
     on<RegistrationNameFocusLost>(_onNameFocusLost);
     on<RegistrationCreateAccount>(_onCreateAccount);
   }
+
+  final UserRepository userRepository;
+  final TokenRepository tokenRepository;
+  final RefreshTokenRepository refreshTokenRepository;
 
   static const _defaultAvatarKey = 'test';
 
@@ -156,9 +162,9 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
     final response = await _register();
     if (response.isRight) {
       final userWithTokens = response.right;
-      await sl.get<UserRepository>().setItem(userWithTokens.user);
-      await sl.get<TokenRepository>().setItem(userWithTokens.token);
-      await sl.get<RefreshTokenRepository>().setItem(userWithTokens.refreshToken);
+      await userRepository.setItem(userWithTokens.user);
+      await tokenRepository.setItem(userWithTokens.token);
+      await refreshTokenRepository.setItem(userWithTokens.refreshToken);
       emit(const RegistrationCompleted());
     } else {
 //TODO hangle error

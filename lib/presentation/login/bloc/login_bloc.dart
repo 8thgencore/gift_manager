@@ -13,19 +13,27 @@ import 'package:gift_manager/data/modal/request_error.dart';
 import 'package:gift_manager/data/repository/refresh_token_repository.dart';
 import 'package:gift_manager/data/repository/token_repository.dart';
 import 'package:gift_manager/data/repository/user_repository.dart';
-import 'package:gift_manager/di/service_locator.dart';
 import 'package:gift_manager/presentation/login/model/models.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginBloc() : super(LoginState.initial()) {
+  LoginBloc({
+    required this.userRepository,
+    required this.tokenRepository,
+    required this.refreshTokenRepository,
+  }) : super(LoginState.initial()) {
     on<LoginLoginButtonClicked>(_loginButtonClicked);
     on<LoginEmailChanged>(_emailChanged);
     on<LoginPasswordChanged>(_passwordChanged);
     on<LoginRequestErrorShowed>(_requestErrorShowed);
   }
+
+  final UserRepository userRepository;
+  final TokenRepository tokenRepository;
+  final RefreshTokenRepository refreshTokenRepository;
+
 
   static final _passwordRegexp = RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$');
 
@@ -40,9 +48,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       );
       if (response.isRight) {
         final userWithTokens = response.right;
-        await sl.get<UserRepository>().setItem(userWithTokens.user);
-        await sl.get<TokenRepository>().setItem(userWithTokens.token);
-        await sl.get<RefreshTokenRepository>().setItem(userWithTokens.refreshToken);
+        await userRepository.setItem(userWithTokens.user);
+        await tokenRepository.setItem(userWithTokens.token);
+        await refreshTokenRepository.setItem(userWithTokens.refreshToken);
         emit(state.copyWith(authenticated: true));
       } else {
         final apiError = response.left;
