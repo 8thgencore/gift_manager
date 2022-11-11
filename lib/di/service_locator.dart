@@ -7,6 +7,7 @@ import 'package:gift_manager/data/repository/token_repository.dart';
 import 'package:gift_manager/data/repository/user_provider.dart';
 import 'package:gift_manager/data/repository/user_repository.dart';
 import 'package:gift_manager/data/storage/shared_preference_data.dart';
+import 'package:gift_manager/domain/logout_interactor.dart';
 import 'package:gift_manager/presentation/home/bloc/home_bloc.dart';
 import 'package:gift_manager/presentation/login/bloc/login_bloc.dart';
 import 'package:gift_manager/presentation/registration/bloc/registration_bloc.dart';
@@ -41,7 +42,15 @@ void _setupRepositories() {
 }
 
 // ONLY SINGLETONS
-void _setupInteractors() {}
+void _setupInteractors() {
+  sl.registerLazySingleton(
+    () => LogoutInteractor(
+      userRepository: sl.get<UserRepository>(),
+      tokenRepository: sl.get<TokenRepository>(),
+      refreshTokenRepository: sl.get<RefreshTokenRepository>(),
+    ),
+  );
+}
 
 // ONLY SINGLETONS
 void _setupComplexInteractors() {}
@@ -53,16 +62,23 @@ void _setApiRelatedClasses() {}
 void _setupBlocs() {
   sl.registerFactory(
     () => LoginBloc(
-        userRepository: sl.get<UserRepository>(),
-        tokenRepository: sl.get<TokenRepository>(),
-        refreshTokenRepository: sl.get<RefreshTokenRepository>()),
+      userRepository: sl.get<UserRepository>(),
+      tokenRepository: sl.get<TokenRepository>(),
+      refreshTokenRepository: sl.get<RefreshTokenRepository>(),
+    ),
   );
   sl.registerFactory(
     () => RegistrationBloc(
-        userRepository: sl.get<UserRepository>(),
-        tokenRepository: sl.get<TokenRepository>(),
-        refreshTokenRepository: sl.get<RefreshTokenRepository>()),
+      userRepository: sl.get<UserRepository>(),
+      tokenRepository: sl.get<TokenRepository>(),
+      refreshTokenRepository: sl.get<RefreshTokenRepository>(),
+    ),
   );
   sl.registerFactory(() => SplashBloc(tokenRepository: sl.get<TokenRepository>()));
-  sl.registerFactory(() => HomeBloc(userRepository: sl.get<UserRepository>()));
+  sl.registerFactory(
+    () => HomeBloc(
+      userRepository: sl.get<UserRepository>(),
+      logoutInteractor: sl.get<LogoutInteractor>(),
+    ),
+  );
 }
