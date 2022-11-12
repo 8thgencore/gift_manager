@@ -31,7 +31,7 @@ class LoginState extends Equatable {
         emailValid: false,
         passwordValid: false,
         authenticated: false,
-        requestError: null,
+        requestError: RequestError.noError,
       );
 
   LoginState copyWith({

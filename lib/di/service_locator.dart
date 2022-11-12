@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:gift_manager/data/http/dio_provider.dart';
+import 'package:gift_manager/data/http/unauthorized_api_service.dart';
 import 'package:gift_manager/data/repository/refresh_token_provider.dart';
 import 'package:gift_manager/data/repository/refresh_token_repository.dart';
 import 'package:gift_manager/data/repository/token_provider.dart';
@@ -56,7 +57,9 @@ void _setupInteractors() {
 void _setupComplexInteractors() {}
 
 // ONLY SINGLETONS
-void _setApiRelatedClasses() {}
+void _setApiRelatedClasses() {
+  sl.registerLazySingleton(() => UnauthorizedApiService());
+}
 
 // ONLY FACTORIES
 void _setupBlocs() {
@@ -65,6 +68,7 @@ void _setupBlocs() {
       userRepository: sl.get<UserRepository>(),
       tokenRepository: sl.get<TokenRepository>(),
       refreshTokenRepository: sl.get<RefreshTokenRepository>(),
+      unauthorizedApiService: sl.get<UnauthorizedApiService>(),
     ),
   );
   sl.registerFactory(
@@ -72,6 +76,7 @@ void _setupBlocs() {
       userRepository: sl.get<UserRepository>(),
       tokenRepository: sl.get<TokenRepository>(),
       refreshTokenRepository: sl.get<RefreshTokenRepository>(),
+      unauthorizedApiService: sl.get<UnauthorizedApiService>(),
     ),
   );
   sl.registerFactory(() => SplashBloc(tokenRepository: sl.get<TokenRepository>()));
@@ -79,6 +84,8 @@ void _setupBlocs() {
     () => HomeBloc(
       userRepository: sl.get<UserRepository>(),
       logoutInteractor: sl.get<LogoutInteractor>(),
+      tokenRepository: sl.get<TokenRepository>(),
+      unauthorizedApiService: sl.get<UnauthorizedApiService>(),
     ),
   );
 }

@@ -16,6 +16,7 @@ import 'package:gift_manager/data/repository/user_repository.dart';
 import 'package:gift_manager/presentation/login/model/models.dart';
 
 part 'login_event.dart';
+
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
@@ -23,6 +24,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     required this.userRepository,
     required this.tokenRepository,
     required this.refreshTokenRepository,
+    required this.unauthorizedApiService,
   }) : super(LoginState.initial()) {
     on<LoginLoginButtonClicked>(_loginButtonClicked);
     on<LoginEmailChanged>(_emailChanged);
@@ -33,7 +35,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final UserRepository userRepository;
   final TokenRepository tokenRepository;
   final RefreshTokenRepository refreshTokenRepository;
-
+  final UnauthorizedApiService unauthorizedApiService;
 
   static final _passwordRegexp = RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$');
 
@@ -73,7 +75,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     required final String email,
     required final String password,
   }) async {
-    final response = await UnauthorizedApiService.getInstance().login(
+    final response = await unauthorizedApiService.login(
       email: email,
       password: password,
     );
