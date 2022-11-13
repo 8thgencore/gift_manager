@@ -1,11 +1,6 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:either_dart/either.dart';
-import 'package:flutter/foundation.dart';
-import 'package:gift_manager/data/http/api_error_type.dart';
 import 'package:gift_manager/data/http/base_api_service.dart';
-import 'package:gift_manager/data/http/dio_provider.dart';
 import 'package:gift_manager/data/http/model/api_error.dart';
 import 'package:gift_manager/data/http/model/gifts_response_dto.dart';
 
@@ -29,5 +24,4 @@ class AuthorizedApiService extends BaseApiService {
       return GiftsResponseDto.fromJson(response.data as Map<String, dynamic>);
     });
   }
-
 }
