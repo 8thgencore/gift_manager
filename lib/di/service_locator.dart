@@ -62,7 +62,12 @@ void _setupComplexInteractors() {}
 
 void _setApiRelatedClasses() {
   sl.registerFactory(() => DioBuilder());
-  sl.registerLazySingleton(() => AuthorizationInterceptor(sl.get<TokenRepository>()));
+  sl.registerLazySingleton(
+    () => AuthorizationInterceptor(
+      tokenRepository: sl.get<TokenRepository>(),
+      logoutInteractor: sl.get<LogoutInteractor>(),
+    ),
+  );
 
   // 1 способ
   sl.registerSingleton<Dio>(sl.get<DioBuilder>().build(), instanceName: _notAuthorizedDio);
