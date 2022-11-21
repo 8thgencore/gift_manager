@@ -4,6 +4,9 @@ Gist Manager project
 
 ## Getting Started
 
+https://votruk.notion.site/Gifts-Manager-API-fd665c83749e4758b15b3df2de645b44
+https://getpostman.com/collections/c607334789190d88736c
+
 This project is a starting point for a Flutter application.
 
 A few resources to get you started if this is your first Flutter project:

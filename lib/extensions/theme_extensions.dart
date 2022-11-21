@@ -30,7 +30,7 @@ extension BrightnessDependantTextStyle on TextStyle {
     switch (brightness) {
       case Brightness.dark:
         return copyWith(color: darkThemeColor);
-      case Brightness.light  :
+      case Brightness.light:
         return copyWith(color: lightThemeColor);
     }
   }

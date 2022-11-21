@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
 extension BuildContextColors on BuildContext {
-
   Color dynamicPlainColor({
     required final Color lightThemeColor,
     required final Color darkThemeColor,
@@ -11,7 +10,7 @@ extension BuildContextColors on BuildContext {
       case Brightness.dark:
         return darkThemeColor;
       case Brightness.light:
-        return  lightThemeColor;
+        return lightThemeColor;
     }
   }
 }

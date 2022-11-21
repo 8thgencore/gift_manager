@@ -1,11 +1,17 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:bloc/bloc.dart';
+import 'package:either_dart/either.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gift_manager/data/http/model/api_error.dart';
+import 'package:gift_manager/data/http/model/user_with_tokens_dto.dart';
+import 'package:gift_manager/data/http/unauthorized_api_service.dart';
 import 'package:gift_manager/data/modal/request_error.dart';
-import 'package:gift_manager/data/storage/shared_preference_data.dart';
+import 'package:gift_manager/data/repository/refresh_token_repository.dart';
+import 'package:gift_manager/data/repository/token_repository.dart';
+import 'package:gift_manager/data/repository/user_repository.dart';
 import 'package:gift_manager/presentation/registration/models/errors.dart';
 
 part 'registration_event.dart';
@@ -13,8 +19,12 @@ part 'registration_event.dart';
 part 'registration_state.dart';
 
 class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
-  RegistrationBloc()
-      : super(RegistrationFieldsInfo(avatarLink: _avatarBuilder(_defaultAvatarKey))) {
+  RegistrationBloc({
+    required this.userRepository,
+    required this.tokenRepository,
+    required this.refreshTokenRepository,
+    required this.unauthorizedApiService,
+  }) : super(RegistrationFieldsInfo(avatarLink: _avatarBuilder(_defaultAvatarKey))) {
     on<RegistrationChangeAvatar>(_onChangeAvatar);
     on<RegistrationEmailChanged>(_onEmailChanged);
     on<RegistrationEmailFocusLost>(_onEmailFocusLost);
@@ -26,6 +36,11 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
     on<RegistrationNameFocusLost>(_onNameFocusLost);
     on<RegistrationCreateAccount>(_onCreateAccount);
   }
+
+  final UserRepository userRepository;
+  final TokenRepository tokenRepository;
+  final RefreshTokenRepository refreshTokenRepository;
+  final UnauthorizedApiService unauthorizedApiService;
 
   static const _defaultAvatarKey = 'test';
 
@@ -146,14 +161,27 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
       return;
     }
     emit(const RegistrationInProgress());
-    final token = await _register();
-    SharedPreferenceData.getInstance().setToken(token);
-    emit(const RegistrationCompleted());
+    final response = await _register();
+    if (response.isRight) {
+      final userWithTokens = response.right;
+      await userRepository.setItem(userWithTokens.user);
+      await tokenRepository.setItem(userWithTokens.token);
+      await refreshTokenRepository.setItem(userWithTokens.refreshToken);
+      emit(const RegistrationCompleted());
+    } else {
+//TODO hangle error
+    }
   }
 
-  Future<String> _register() async {
-    await Future.delayed(const Duration(seconds: 2));
-    return 'token';
+  Future<Either<ApiError, UserWithTokensDto>> _register() async {
+    final response = await unauthorizedApiService.register(
+      email: _email,
+      password: _password,
+      name: _name,
+      avatarUrl: _avatarBuilder(_avatarKey),
+    );
+    //TODO errors
+    return response;
   }
 
   RegistrationFieldsInfo _calculateFieldsInfo() {
