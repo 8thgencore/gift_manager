@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gift_manager/di/service_locator.dart';
 import 'package:gift_manager/presentation/gifts/bloc/gifts_bloc.dart';
+import 'package:gift_manager/resources/illustrations.dart';
 
 class GiftsPage extends StatelessWidget {
   const GiftsPage({super.key});
@@ -25,11 +27,11 @@ class _GiftsPageWidget extends StatelessWidget {
       body: BlocBuilder<GiftsBloc, GiftsState>(
         builder: (context, state) {
           if (state is InitialGiftsLoadingState) {
-            //TODO show loading state
+            return const _LoadingWidget();
           } else if (state is NoGiftsState) {
-            //TODO show no gifts state
+            return const _NoGiftsWidget();
           } else if (state is InitialLoadingErrorState) {
-            //TODO loading error state
+            return const _InitialLoadingErrorWidget();
           } else if (state is LoadedGiftsState) {
             //TODO show gifts
           }
@@ -39,6 +41,75 @@ class _GiftsPageWidget extends StatelessWidget {
           return const Text('HomePage');
         },
       ),
+    );
+  }
+}
+
+class _LoadingWidget extends StatelessWidget {
+  const _LoadingWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: CircularProgressIndicator());
+  }
+}
+
+class _NoGiftsWidget extends StatelessWidget {
+  const _NoGiftsWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Spacer(),
+        SvgPicture.asset(Illustrations.noGifts),
+        const SizedBox(height: 38),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 40),
+          child: Text(
+            'Добавьте свой первый подарок',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+          ),
+        ),
+        const Spacer(),
+      ],
+    );
+  }
+}
+
+class _InitialLoadingErrorWidget extends StatelessWidget {
+  const _InitialLoadingErrorWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Spacer(),
+        SvgPicture.asset(Illustrations.noGifts),
+        const SizedBox(height: 38),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 40),
+          child: Text(
+            'Произошла ошибка',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+          ),
+        ),
+        const SizedBox(height: 24),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40),
+          child: ElevatedButton(
+            onPressed: () => context.read<GiftsBloc>().add(const GiftsLoadingRequest()),
+            child: Text(
+              'Попробовать снова'.toUpperCase(),
+            ),
+          ),
+        ),
+        const Spacer(),
+      ],
     );
   }
 }
