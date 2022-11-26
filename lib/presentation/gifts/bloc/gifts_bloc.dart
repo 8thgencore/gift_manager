@@ -15,13 +15,14 @@ class GiftsBloc extends Bloc<GiftsEvent, GiftsState> {
   }) : super(const InitialGiftsLoadingState()) {
     on<GiftsPageLoaded>(_onGiftsPageLoaded);
     on<GiftsLoadingRequest>(_onGiftsLoadingRequest);
+    on<GiftsAutoLoadingRequest>(_onGiftsAutoLoadingRequest);
   }
 
   static const _limit = 10;
   final AuthorizedApiService authorizedApiService;
   final gifts = <GiftDto>[];
   PaginationInfo paginationInfo = PaginationInfo.initial();
-  bool initialErrorHappened = false;
+  bool errorHappened = false;
   bool loading = false;
 
   FutureOr<void> _onGiftsPageLoaded(
@@ -38,6 +39,16 @@ class GiftsBloc extends Bloc<GiftsEvent, GiftsState> {
     await _loadGifts(emit);
   }
 
+  FutureOr<void> _onGiftsAutoLoadingRequest(
+    GiftsAutoLoadingRequest event,
+    Emitter<GiftsState> emit,
+  ) async {
+    if (errorHappened) {
+      return;
+    }
+    await _loadGifts(emit);
+  }
+
   FutureOr<void> _loadGifts(
     Emitter<GiftsState> emit,
   ) async {
@@ -50,6 +61,8 @@ class GiftsBloc extends Bloc<GiftsEvent, GiftsState> {
     loading = true;
     if (gifts.isEmpty) {
       emit(const InitialGiftsLoadingState());
+    } else {
+      emit(LoadedGiftsState(gifts: gifts, showLoading: true, showError: false));
     }
     await Future.delayed(const Duration(seconds: 2));
     final giftsResponse = await authorizedApiService.getAllGifts(
@@ -57,14 +70,14 @@ class GiftsBloc extends Bloc<GiftsEvent, GiftsState> {
       offset: paginationInfo.lastLoadedPage * _limit,
     );
     if (giftsResponse.isLeft) {
-      initialErrorHappened = true;
+      errorHappened = true;
       if (gifts.isEmpty) {
         emit(const InitialLoadingErrorState());
       } else {
         emit(LoadedGiftsState(gifts: gifts, showLoading: false, showError: true));
       }
     } else {
-      initialErrorHappened = false;
+      errorHappened = false;
       final canLoadMore = giftsResponse.right.gifts.length == _limit;
       paginationInfo = PaginationInfo(
         canLoadMore: canLoadMore,
@@ -74,7 +87,7 @@ class GiftsBloc extends Bloc<GiftsEvent, GiftsState> {
         emit(const NoGiftsState());
       } else {
         gifts.addAll(giftsResponse.right.gifts);
-        emit(LoadedGiftsState(gifts: gifts, showLoading: canLoadMore, showError: false));
+        emit(LoadedGiftsState(gifts: [...gifts], showLoading: canLoadMore, showError: false));
       }
     }
     loading = false;
