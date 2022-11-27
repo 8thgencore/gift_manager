@@ -83,7 +83,7 @@ class _LoginPageWidgetState extends State<_LoginPageWidget> {
       child: Column(
         children: [
           // Expanded(flex: 4, child: SizedBox.expand()),
-          const SizedBox(height: 64),
+          const Spacer(flex: 4),
           Center(
             child: Text('Вход', style: context.theme.h2),
           ),
