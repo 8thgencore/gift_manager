@@ -12,6 +12,7 @@ import 'package:gift_manager/data/repository/user_provider.dart';
 import 'package:gift_manager/data/repository/user_repository.dart';
 import 'package:gift_manager/data/storage/shared_preference_data.dart';
 import 'package:gift_manager/domain/logout_interactor.dart';
+import 'package:gift_manager/presentation/gifts/bloc/gifts_bloc.dart';
 import 'package:gift_manager/presentation/home/bloc/home_bloc.dart';
 import 'package:gift_manager/presentation/login/bloc/login_bloc.dart';
 import 'package:gift_manager/presentation/registration/bloc/registration_bloc.dart';
@@ -116,6 +117,12 @@ void _setupBlocs() {
       unauthorizedApiService: sl.get<UnauthorizedApiService>(),
       tokenRepository: sl.get<TokenRepository>(),
       refreshTokenRepository: sl.get<RefreshTokenRepository>(),
+    ),
+  );
+
+  sl.registerFactory(
+    () => GiftsBloc(
+      authorizedApiService: sl.get<AuthorizedApiService>(),
     ),
   );
 }
