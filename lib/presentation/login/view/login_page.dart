@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gift_manager/data/modal/request_error.dart';
+import 'package:gift_manager/data/model/request_error.dart';
 import 'package:gift_manager/di/service_locator.dart';
 import 'package:gift_manager/extensions/theme_extensions.dart';
 import 'package:gift_manager/presentation/home/view/home_page.dart';
@@ -82,8 +82,7 @@ class _LoginPageWidgetState extends State<_LoginPageWidget> {
       ],
       child: Column(
         children: [
-          // Expanded(flex: 4, child: SizedBox.expand()),
-          const SizedBox(height: 64),
+          const Spacer(flex: 4),
           Center(
             child: Text('Вход', style: context.theme.h2),
           ),

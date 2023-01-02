@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gift_manager/di/service_locator.dart';
+import 'package:gift_manager/navigation/route_generator.dart';
 import 'package:gift_manager/observer.dart';
-import 'package:gift_manager/presentation/splash/view/splash_page.dart';
 import 'package:gift_manager/presentation/theme/theme.dart';
 
 void main() {
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: lightTheme,
       darkTheme: darkTheme,
-      home: const SplashPage(),
+      onGenerateRoute:  generateRoute(),
     );
   }
 }
