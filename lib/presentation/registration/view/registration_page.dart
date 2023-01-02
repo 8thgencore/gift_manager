@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gift_manager/di/service_locator.dart';
 import 'package:gift_manager/extensions/build_context.dart';
 import 'package:gift_manager/extensions/theme_extensions.dart';
-import 'package:gift_manager/presentation/home/view/home_page.dart';
+import 'package:gift_manager/navigation/route_name.dart';
 import 'package:gift_manager/presentation/registration/bloc/registration_bloc.dart';
 import 'package:gift_manager/resources/app_colors.dart';
 
@@ -19,9 +19,9 @@ class RegistrationPage extends StatelessWidget {
       child: BlocListener<RegistrationBloc, RegistrationState>(
         listener: (context, state) {
           if (state is RegistrationCompleted) {
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (_) => const HomePage()),
-              (route) => false,
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              RouteName.home.route,
+              (route) => route.settings.name != '/',
             );
           }
         },

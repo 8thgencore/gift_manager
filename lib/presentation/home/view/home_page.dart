@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gift_manager/di/service_locator.dart';
-import 'package:gift_manager/presentation/gifts/view/gifts_page.dart';
+import 'package:gift_manager/navigation/route_name.dart';
 import 'package:gift_manager/presentation/home/bloc/home_bloc.dart';
-import 'package:gift_manager/presentation/login/view/login_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -25,8 +24,8 @@ class _HomePageWidget extends StatelessWidget {
     return BlocListener<HomeBloc, HomeState>(
       listener: (context, state) {
         if (state is HomeGoToLogin) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const LoginPage()),
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            RouteName.login.route,
             (route) => false,
           );
         }
@@ -53,11 +52,7 @@ class _HomePageWidget extends StatelessWidget {
               ),
               const SizedBox(height: 42),
               ElevatedButton(
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => const GiftsPage(),
-                  ),
-                ),
+                onPressed: () => Navigator.of(context).pushNamed(RouteName.gifts.route),
                 child: const Text('Open presents'),
               )
             ],
