@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
 class PeoplePage extends StatelessWidget {
-  const PeoplePage({Key? key}) : super(key: key);
+  const PeoplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: const Center(
+    return const Scaffold(
+      body: Center(
         child: Text(
           'PEOPLE',
           style: TextStyle(fontSize: 30),
