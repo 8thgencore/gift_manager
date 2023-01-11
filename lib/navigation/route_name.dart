@@ -6,7 +6,8 @@ enum RouteName {
   login(route: '/login'),
   registration(route: '/registration'),
   resetPassword(route: '/reset_password'),
-  splash(route: '/');
+  splash(route: '/'),
+  gift(route: '/gift');
 
   const RouteName({required this.route});
 
